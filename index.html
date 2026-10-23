@@ -60,7 +60,7 @@
                 <input type="password" id="api-key-input" placeholder="Paste API Key di sini..." class="w-full bg-slate-900/90 border border-cyan-500/30 rounded-xl px-4 py-2.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400 transition">
             </div>
 
-            <button onclick="startSystem()" class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-outfit font-semibold tracking-wider hover:opacity-90 active:scale-95 transition shadow-lg neon-border-cyan">
+            <button onclick="startSystem()" class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-outfit font-semibold tracking-wider hover:opacity-90 active:scale-95 transition shadow-lg neon-border-cyan cursor-pointer">
                 MULAI SISTEM JARVIS
             </button>
         </div>
@@ -73,7 +73,7 @@
             <h1 class="font-outfit text-xl font-bold tracking-wider text-cyan-400 neon-text-cyan">J.A.R.V.I.S. AI</h1>
         </div>
         <div class="flex items-center space-x-4">
-            <button onclick="resetApiKey()" title="Reset API Key" class="text-slate-400 hover:text-cyan-400 text-xs transition flex items-center">
+            <button onclick="resetApiKey()" title="Reset API Key" class="text-slate-400 hover:text-cyan-400 text-xs transition flex items-center cursor-pointer">
                 <i class="fa-solid fa-key mr-1"></i> API Key
             </button>
             <div class="text-right">
@@ -149,7 +149,7 @@
         let recognition = null;
         let isListening = false;
         let isSpeaking = false;
-        let apiKey = localStorage.getItem('jarvis_gemini_key'] || '';
+        let apiKey = localStorage.getItem('jarvis_gemini_key') || '';
         let idVoice = null;
 
         if(apiKey) {
@@ -179,10 +179,8 @@
                 return;
             }
 
-            // Batalkan suara sebelumnya secara aman
             window.speechSynthesis.cancel();
             
-            // Beri jeda singkat agar engine bersih dari konflik 'interrupted'
             setTimeout(() => {
                 isSpeaking = true;
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -200,7 +198,6 @@
                 };
 
                 utterance.onerror = (e) => {
-                    console.log("TTS Error Handled:", e);
                     isSpeaking = false;
                     document.getElementById('audio-status').innerText = "Standby";
                     if (callback) callback();
@@ -252,7 +249,6 @@
             };
 
             recognition.onerror = (event) => {
-                console.log("Speech Error Ignored/Handled:", event.error);
                 resetButtonUI();
             };
 
@@ -262,7 +258,7 @@
         }
 
         function toggleListen() {
-            if (isSpeaking) return; // Jangan izinkan mendengar saat Jarvis bicara
+            if (isSpeaking) return;
             if (!recognition) return;
 
             if (isListening) {
@@ -270,9 +266,7 @@
             } else {
                 try {
                     recognition.start();
-                } catch(e) {
-                    console.log("Recognition start conflict avoided:", e);
-                }
+                } catch(e) {}
             }
         }
 
@@ -312,12 +306,9 @@
                 }
 
                 document.getElementById('transcript-text').innerText = aiReply;
-                
-                // Panggil suara setelah benar-benar aman dari konflik
                 speakText(aiReply);
 
             } catch (error) {
-                console.error("API Error:", error);
                 const errReply = "Maaf Tuan, terjadi gangguan pada jaringan.";
                 document.getElementById('transcript-text').innerText = errReply;
                 speakText(errReply);
